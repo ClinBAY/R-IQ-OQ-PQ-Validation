@@ -1,0 +1,28 @@
+Package: iopqualr
+Title: Installation, operational and performance qualification for R
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "First",
+           family = "Last",
+           role = c("aut", "cre"),
+           email = "first.last@example.com",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: Installation, operational and performance qualification for R
+License: Copyrighted, ClinBAY, all rights reserved.
+Encoding: UTF-8
+LazyData: true
+Imports:
+    plyr,
+    dplyr,
+    magrittr,
+    yaml,
+    gbRd,
+    xtable,
+    tinytex,
+    rmarkdown,
+    knitr,
+    stringr,
+    testthat
+RoxygenNote: 7.1.1
+SystemRequirements:
+    pandoc (> 1.12)

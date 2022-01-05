@@ -1,0 +1,21 @@
+description: Sample IOP-Qualification Input File
+report_author: Company Name
+r_version: 3.3.4
+packages:
+  - MCPMod (== 1.0-10)
+  - mvtnorm (== 1.0-6)
+  - ggplot2 (== 2.2.1)
+  - DoseFinding (== 0.9-15)
+  - idontexist
+  - idontexist (== 1.0.0)
+  - dplyr (== 1.0.0)
+  - dplyr
+custom_tests_path: 
+custom_performance_tests:
+  - mvtnorm
+custom_operational_tests:
+  - mvtnorm
+test_types:
+  - examples
+  - vignettes
+  - tests
