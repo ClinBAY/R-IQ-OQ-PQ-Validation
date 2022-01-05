@@ -68,7 +68,7 @@ As you can see on the below diagram, the process is simple:
     PDF report, which lists all the tests executed and presents the
     Qualification outcome
 
-![Diagram](./assets/img/riopqqual_how-it-works.png)
+![Diagram](./man/figures/riopqqual_how-it-works.png)
 
 ## Accessing the Package
 
