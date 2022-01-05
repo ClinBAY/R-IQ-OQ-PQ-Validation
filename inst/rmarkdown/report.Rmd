@@ -1,0 +1,387 @@
+---
+title: "Installation, Operational and Performance Qualification Assessment for R Statistical Programming Language"
+author: "`r IOPQUALR_SETTINGS[['report_author']]`"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: true
+    fig_caption: true
+    number_sections: true
+  html_document:
+    toc: true
+    fig_caption: true
+    number_sections: true
+    self_contained: no
+    toc_float: yes
+header-includes:
+  - \usepackage{listings}
+  - \usepackage{longtable}
+  - \usepackage{fancyhdr}
+  - \usepackage{float}
+  - \usepackage{caption}
+  - \usepackage{datetime}
+  - \usepackage{framed,color}
+  - \definecolor{shadecolor}{rgb}{1,.8,.3}
+  - \let\oldsection\section
+  - \renewcommand\section{\clearpage\oldsection}
+  - \usepackage{array}
+  - \usepackage{cellspace}
+  - \setlength\cellspacetoplimit{4pt}
+  - \setlength\cellspacebottomlimit{4pt}
+  - \usepackage{etoolbox}
+  - \usepackage{xcolor}
+  - \captionsetup{width=0.9\linewidth, labelfont=bf, textfont=bf, font=normalsize, format=hang}
+  - \lstset{frame=single,commentstyle=\color{BrickRed},columns=fixed,basicstyle=\ttfamily,stringstyle=\color{Red},keepspaces=true,showstringspaces=false,numbers=none}
+  - \lstdefinestyle{Rcode}{backgroundcolor=\color[gray]{0.95}}
+---
+`r cat(getwd())`
+```{r ignore=TRUE, echo=FALSE, results="hide", message=FALSE, warning=FALSE, cache=FALSE}
+
+test_results <- generateAllTestResults()
+
+```
+
+```{r ignore=TRUE, echo=FALSE, results="hide", message=FALSE, warning=FALSE, cache=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE, comment = "", warning = FALSE)
+options(xtable.include.rownames = FALSE,
+        xtable.comment = FALSE,
+        xtable.table.placement = "H",
+        xtable.hline.after = NULL ,
+        xtable.caption.placement = "top"
+        )
+
+library(xtable)
+
+```
+
+
+\pagestyle{fancyplain}
+\fancyhf{}
+
+\lfoot{produced by iopqualr version 0.0.0.9000{ }\today{ }\currenttime}
+\rfoot{\fancyplain{}{\thepage}}
+
+# Introduction
+
+\begin{shaded}
+This is a report of tests for Installation, Operational and Performance Assessment for the R statisitical programming language.
+\end{shaded}
+The report encompasses both core system tests, tests of base and recommended packages as well as custom installed packages.
+
+The report also details the operating environment and installation parameters of the R installation.
+
+## R
+
+R is a statistical programming language.
+
+## Tests
+
+**Installation Qualification**  
+whether or not R and required _packages_ have been installed correctly
+
+**Operational Qualification**  
+whether or not R and required _packages_ can operate as intended  
+
+**Performance Qualification**  
+whether or not R and required _packages_ can perform under planned load  
+
+
+# Installation Qualification (IQ)
+
+## R Home
+The following is the file system location where R is installed:
+\texttt{`r R.home()`}
+
+## Installed Packages
+
+A complete list of installed packages for this R installation can be found in the Appendix.
+
+## System Information
+
+Below are the details of system information for this R installation.
+
+
+`r getHelpDescription("Sys.info")`
+```{r, results="asis", echo=FALSE}
+
+Sys.info() %>% 
+  {dplyr::tibble(Variable = names(.), Value = unname(.))} %>% 
+  printXtable("Details of System Information")
+
+```
+
+## R Version
+`r getHelpDescription("R.version")`
+```{r, results="asis", echo=FALSE}
+
+R.version %>%
+  {dplyr::tibble(Variable = names(.), Value = as.vector(unlist(.)))} %>%
+  printXtable("Details of R.version")
+
+```
+
+## Platform
+`r getHelpDescription(".Platform")`
+
+```{r, results="asis", echo=FALSE}
+
+.Platform %>% 
+  {dplyr::tibble(Variable = names(.), Value = unname(.))} %>% 
+  printXtable("Details of Platform")
+
+```
+
+## Machine
+`r getHelpDescription(".Machine")`
+```{r, results="asis", echo=FALSE, warning=FALSE}
+
+.Machine %>%
+  plyr::llply(formatC, "e") %>% 
+  {dplyr::tibble(Variable = names(.), Value = unname(.))} %>% 
+  printXtable("Details of Machine")
+
+```
+
+## Session Info
+
+`r getHelpDescription("sessionInfo")`
+
+\noindent\rule{\textwidth}{1pt}
+
+\fontsize{9}{9}
+```{r, comment=NA, echo=TRUE}
+
+sessionInfo()
+
+```
+\fontsize{10}{10}
+\noindent\rule{\textwidth}{1pt}
+
+## R Packages
+
+Below are the results of tests that required installed packages (custom) are indeed installed and meet both minimum and maximum version requirements (minimum and maximum versions may be the same if a specific package version is required):
+
+```{r, echo=FALSE, results="asis"}
+
+test_results[["installed_pkg_versions"]] %>%
+  renameInstalledPackageVersions %>%
+  colorLogical %>%
+  printXtable(caption = "Results of Installed Package Version Tests", size = "\\fontsize{8pt}{10pt}\\selectfont")
+
+```
+
+
+# Operational Qualification (OQ)
+
+Operational qualification assessment involves testing that R and required package are capable of operating is intended.
+
+## Core System Tests
+
+Below are the results of R core system tests. If the test result is `NA` this means that the R installation has been made without core system tests being available.
+
+```{r, results="asis", echo=FALSE}
+
+test_results[["basic"]] %>% printXtable("Results of Core System Tests")
+
+```
+
+## Base Packages
+
+Below are the results of assessments of examples, tests and vignettes for R base packages.
+
+### Examples
+```{r, echo=FALSE, results="asis"}
+
+test_results[["base_rec"]] %>%
+  dplyr::filter(scope == "base", types == "examples") %>% 
+  printXtable("Base Package Examples Test Results")
+
+```
+### Vignettes
+```{r, echo=FALSE, results="asis"}
+
+test_results[["base_rec"]] %>%
+  dplyr::filter(scope == "base", types == "vignettes") %>%
+  printXtable("Base Package Vignettes Test Results")
+
+```
+### Tests
+```{r, echo=FALSE, results="asis"}
+
+test_results[["base_rec"]] %>% 
+  dplyr::filter(scope == "base", types == "tests") %>% 
+  printXtable("Base Package 'Tests' Test Results")
+
+```
+
+## Recommended Packages
+
+Below are the results of assessments of examples, tests and vignettes for R recommmended packages.
+
+### Examples
+
+```{r, echo=FALSE, results="asis"}
+
+test_results[["base_rec"]] %>%
+  dplyr::filter(scope == "recommended", types == "examples") %>%
+  printXtable(caption = "Recommended Package Examples Test Results")
+
+```
+
+### Vignettes
+
+```{r, echo=FALSE, results="asis"}
+
+test_results[["base_rec"]] %>%
+  dplyr::filter(scope == "recommended", types == "vignettes") %>%
+  printXtable(caption = "Recommended Package Vignettes Test Results")
+
+```
+
+### Tests
+
+```{r, echo=FALSE, results="asis"}
+
+test_results[["base_rec"]] %>%
+  dplyr::filter(scope == "recommended", types == "tests") %>%
+  printXtable(caption = "Recommended Package 'Tests' Test Results")
+
+```
+
+## Installed Packages
+
+Operational tests for installed packages comprise built-in tests provided by the package developers, and custom tests (if any) as specified and provided by the report author.
+
+### Built-in Tests
+
+Below are operational qualification assessment results for specific installed packages.
+
+```{r, echo=FALSE, results="asis"}
+if (is.null(test_results[["custom_pkgs"]]) | (sum(dim(test_results[["custom_pkgs"]])) == 0)) {
+  "No Installed Packages have been specified to run Operational Tests"
+} else {
+test_results[["custom_pkgs"]] %>%
+  dplyr::filter(types != "tests") %>%
+  dplyr::group_by(pkg) %>%
+  dplyr::summarise_at("test_passed", all) %>%
+  printXtable(caption = "Installed Package Operational Tests")
+}
+```
+
+### Custom Tests
+
+Below are operational qualification assessment results for specific installed packages, custom tests:
+
+```{r, echo=FALSE, results="asis"}
+
+if (is.null(test_results[["custom_operational"]])) {
+  "No custom operational tests have been specified to run"
+} else {
+  test_results[["custom_operational"]] %>%
+    dplyr::select(-file, -(nb:real), -result) %>%
+    dplyr::mutate_at("passed", as.logical) %>%
+    dplyr::rename(test_passed = passed) %>%
+    printXtable(caption = "Installed Package Performance Tests, Custom")
+}
+
+```
+
+# Performance Qualification (PQ)
+
+
+## Installed Packages
+
+Performance tests for installed packages comprise built-in tests provided by the package developers, and custom tests (if any) as specified and provided by the report author.
+
+### Built-in Tests
+
+Below are performance qualification assessment results for specific installed packages.
+
+```{r, echo=FALSE, results="asis"}
+if (is.null(test_results[["custom_pkgs"]]) | (sum(dim(test_results[["custom_pkgs"]])) == 0)) {
+  "No Installed Packages have been specified to run Performance Tests"
+} else {
+test_results[["custom_pkgs"]] %>%
+  dplyr::filter(types == "tests") %>%
+  dplyr::group_by(pkg) %>%
+  dplyr::summarise_at("test_passed", all) %>%
+  printXtable(caption = "Installed Package Performance Tests")
+}
+
+```
+
+### Custom Tests
+
+Below are performance qualification assessment results for specific installed packages, custom tests:
+
+```{r, echo=FALSE, results="asis"}
+
+if (is.null(test_results[["custom_performance"]])) {
+  "No custom Performance tests have been specified to run"
+} else {
+  test_results[["custom_performance"]] %>%
+    dplyr::select(-file, -(nb:real), -result) %>%
+    dplyr::mutate_at("passed", as.logical) %>%
+    dplyr::rename(test_passed = passed) %>%
+    printXtable(caption = "Installed Package Performance Tests, Custom")
+}
+
+```
+
+# Conclusions
+
+The overall result of the IOP Qualification assessment is:
+
+```{r, echo=FALSE, results="asis"}
+
+ifelse(
+  test_results %>% summariseTestResults %>% tail(1) %$% `All Tests Passed`,
+  "\\texttt{PASSED}",
+  "\\textcolor{red}{\\texttt{NOT PASSED}}"
+) %>% cat
+
+```
+
+Below is a summary table of which tests have passed (in aggregate), and which not.
+
+Note for Windows installation of R 3.4.3 from binary: that the overall test results is reported as _passed_ even if there is a failure reported for the _Basic Tests_. The reason for this is that the basic tests fail on an official R 3.4.3 windows binary distribution from CRAN on the single point of a difference in function and object counts (`demos.Rout` test). There is no way of remedying this error except for changing the test, and it can be explained as an error in the test itself; therefore it's conclusion is overridden in this one case.
+
+```{r, echo=FALSE, results="asis"}
+
+if (!is.null(summariseTestResults(test_results))) {
+  if (!knitr::is_html_output()) {
+    summariseTestResults(test_results) %>%
+      printXtable(caption = "Custom Performance Test Results")
+  } else{
+    summariseTestResults(test_results) %>% knitr::kable()
+  }
+}
+
+```
+
+# Appendixes
+
+## Installed R Packages
+
+```{r, echo=FALSE, comment=NA, results="asis", warning=FALSE}
+
+installed.packages() %>%
+  dplyr::as_tibble() %>%
+  dplyr::select(Package, Version) %>%
+  printXtable("Installed R Packages",
+              tabular.environment = "longtable",
+              add.to.row = customAddToRow())
+
+```
+
+
+```{r, results = 'asis'}
+
+plots <- list.files("/mnt/EXT4/t/report_files/figure-html/")
+
+for(i in plots){
+  filename <- file.path("report_files/figure-html/", i)
+  cat("![text](",filename,")")
+}
+```
