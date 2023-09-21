@@ -382,6 +382,7 @@ plots <- list.files("/mnt/EXT4/t/report_files/figure-html/")
 
 for(i in plots){
   filename <- file.path("report_files/figure-html/", i)
-  cat("![text](",filename,")")
+  plot_ref <- paste0("![text](", filename, ")")
+  cat(plot_ref)
 }
 ```
