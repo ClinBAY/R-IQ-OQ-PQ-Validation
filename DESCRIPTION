@@ -6,22 +6,31 @@ Authors@R:
            family = "Kakoullis",
            role = c("aut", "cre"),
            email = "r-validation@clinbay.com")
-Description: Installation, operational and performance qualification for R
+Description: Facilitates the creation of automated Installation Qualification (IQ),
+    Operational Qualification (OQ), and Performance Qualification (PQ) reports for R
+    environments, particularly in regulated industries. The package verifies package
+    installations and test results against predefined specifications, generating
+    comprehensive PDF or HTML reports to support software validation processes. It is
+    useful for ensuring reproducibility and regulatory compliance across multiple R
+    installations.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Imports:
-    plyr,
     dplyr,
-    magrittr,
-    yaml,
     gbRd,
-    xtable,
-    tinytex,
-    rmarkdown,
     knitr,
+    plyr,
+    assertthat,
+    rlang,
+    rmarkdown,
     stringr,
-    testthat
-RoxygenNote: 7.1.1
+    testthat,
+    tinytex,
+    xtable,
+    yaml
+RoxygenNote: 7.2.3
 SystemRequirements:
     pandoc (> 1.12)
+URL: https://github.com/ClinBAY/R-IQ-OQ-PQ-Validation
+BugReports: https://github.com/ClinBAY/R-IQ-OQ-PQ-Validation/issues
