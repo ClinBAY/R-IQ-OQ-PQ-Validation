@@ -1,16 +1,15 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file 
+<!-- README.md is generated from README.Rmd. Please edit that file
 To render the md file: rmarkdown::render('README.Rmd')
-(the Package rmarkdown must be installed: install.packages("rmarkdown") ).
+(The package rmarkdown must be installed: install.packages("rmarkdown") ).
 -->
 
 # iopqualr
 
-This is an open-source R package (the “Package”) for creating automated
-installation, operational and performance qualification (“IQ/OQ/PQ”)
-reports.
+Open-source R program for creating R IQ/OQ/PQ automated reports (the
+“Program”).
 
-The Package relates to systems and software certification for regulated
+This package relates to systems and software certification for regulated
 environments.
 
 <!-- badges: start -->
@@ -19,17 +18,16 @@ environments.
 ## Introduction
 
 When **using R in a regulated and controlled environment** (like in the
-pharmaceutical research industry), one must often ensure and prove that
-the outputs of your R installation are **accurate** and
-**reproducible**.
+pharmaceutical research industry), you must ensure and prove that the
+output of your R programs are **accurate** and **reproducible**.
 
 The purpose of this package is to **generate automatic** installation,
 operational and performance qualification (IQ/OQ/PQ) **assessment report
-in PDF or HTML format** for an R installation. Such IQ/OQ/PQ report can
+in PDF** or HTML format for an R installation. Such IQ/OQ/PQ report can
 be used to comply with validation and quality assurance requirements
 when using R in a regulated environment.
 
-The Package uses as **input** a **YAML** file defining a list of
+The Program uses as **input** a **YAML** file defining a list of
 packages versions and tests to execute, and verifies that these packages
 are installed with the expected version and that test run successfully.
 
@@ -38,11 +36,11 @@ summarizing all the IQ/OQ/PQ tests executed and presents a qualification
 outcome (PASSED or FAILED). The report also details the operating
 environment and installation parameters of the R installation.
 
-The Package can be used on any R environment to ensure that it matches
-the expected configuration and works as expected. It is particularly
-**useful** in companies having R installed on **several user
-environments** and aiming to ensure that they are all **identical and
-produce the same results**.
+This R package can be used on any R environment to ensure that it
+matches the expected configuration and works as expected. It is
+particularly **useful** in companies having R installed on **several
+user environments** and aiming to ensure that they are all **identical
+and produce the same results**.
 
 For more information about validation and qualification of R in
 regulated environments, we recommend following the [R Validation
@@ -68,44 +66,47 @@ As you can see on the below diagram, the process is simple:
     PDF report, which lists all the tests executed and presents the
     Qualification outcome
 
-![Diagram](./man/figures/riopqqual_how-it-works.png)
+<figure>
+<img src="./assets/img/riopqqual_how-it-works.png" alt="Diagram" />
+<figcaption aria-hidden="true">Diagram</figcaption>
+</figure>
 
-## Accessing the Package
+## Accessing the package
 
-### Installing the Package
+### Installing the R package
 
 #### Installation from CRAN
 
-You can install the released version of the Package from
+You can install the released version of iopqualr from
 [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
-install.packages("iopqualr", dependencies=TRUE)
+install.packages("iopqualr", dependencies = T)
 ```
 
 #### Installation from GitHub
 
-To install the Package from a GitHub repository:
+To install the package from a GitHub repository:
 
 ``` r
 #install devtools package
 install.packages("devtools")
-# In the below, github_url is the path to the github repository 
+# In the below, github_url is the path to the github repository
 # containing the code.
 devtools::install(repo="<github_url>", dependencies = T)
 ```
 
 #### Installation from a local folder or .zip file
 
-The Package can also be installed from a local compressed folder. Rtools
-should be installed first from
+This package can also be installed from a local compressed folder.
+Rtools should be installed first from
 [Rtools](https://cran.r-project.org/bin/windows/Rtools/) and added to
 Environment Variables(installation instructions can be found on the
 Rtools page link). Rtools is used on Windows to build R base and R
 packages that contain compiled code, and is required to install an R
 package from source.
 
-Install the Package and other required packages by running:
+Install the package and other required packages by running:
 
 ``` r
 #installing .zip file
@@ -114,7 +115,7 @@ devtools::install("C:/path_to_zip/name_of_zip.zip", dependencies = T)
 ```
 
 Alternatively, if the folder is not compressed, the following can be
-used to install the Package:
+used to install the package:
 
 ``` r
 #install devtools package
@@ -122,9 +123,9 @@ install.packages("devtools")
 devtools::install("C:/path_to_folder/", dependencies = T)
 ```
 
-### Loading the Package in R
+### Loading the package in R
 
-To use the Package, it has to be loaded into the R environment.
+To use the package, it has to be loaded into the R environment.
 
     library(iopqualr)
 
@@ -133,28 +134,26 @@ To use the Package, it has to be loaded into the R environment.
 To render the PDF file from an RMarkdown template, both LaTeX and Pandoc
 are required
 
--   The LaTeX requirement can be met by installing tinytex
-    [LaTeX](https://yihui.org/tinytex/) .
--   If RStudio is used then Pandoc is included, otherwise
-    [Pandoc](https://pandoc.org/) may have to be installed on your
-    system.
+- The LaTeX requirement can be met by installing tinytex
+  [LaTeX](https://yihui.org/tinytex/) .
+- If RStudio is used then Pandoc is included, otherwise
+  [Pandoc](https://pandoc.org/) may have to be installed on your system.
 
 ## Usage
 
 ### Standard Operating Process
 
-1.  The Package is installed
+1.  The Program is installed
 2.  The user creates a specification file in a structured input format
     such as JSON or YAML (the “Spec”)
-    -   Spec includes requirements on operating system, R installation,
-        R packages (along with their acceptable version number or
-        range).
-    -   Spec details every R package which must be present and which
-        tests to run on each package.
-3.  User runs the Package
-    -   Spec file location (path with a file name) as a parameter
-    -   Desired Output file location (path with a file name) as a
-        parameter
+    - Spec includes requirements on operating system, R installation, R
+      packages (along with their acceptable version number or range).
+    - Spec details every R package which must be present and which tests
+      to run on each package.
+3.  User runs the Program
+    - Spec file location (path with a file name) as a parameter
+    - Desired Output file location (path with a file name) as a
+      parameter
 4.  Program runs using Spec as input
 5.  Program creates PDF R IQ-OQ-PQ report (the “Output”) and writes to
     output location.
@@ -162,7 +161,7 @@ are required
 ### Inputs
 
 The inputs to the qualification assessments is a YAML specification file
-which is read by the Package into a an R list. The YAML file can be
+which is read by the package into a an R list. The YAML file can be
 generated using the built-in assistant:
 
 ``` r
@@ -171,17 +170,17 @@ inputHelper()
 
 The input file contains the following mandatory elements:
 
-1.  **report\_author**: author as should appear on front of the report
+1.  **report_author**: author as should appear on front of the report
 2.  **packages**: list of required packages and package versions of the
     same format as the R package DESCRIPTION file
-3.  **custom\_tests\_path**: path to custom test files
-4.  **custom\_operational\_tests**: list of packages for which custom
+3.  **custom_tests_path**: path to custom test files
+4.  **custom_operational_tests**: list of packages for which custom
     operational tests area available and should be run
-5.  **custom\_performance\_tests**: list of packages for which custom
+5.  **custom_performance_tests**: list of packages for which custom
     performance tests area available and should be run
 
 View a sample YAML containing tests specifications:
-[sample\_input.yaml](pkg/inst/extdata/sample_input.yaml)
+[sample_input.yaml](pkg/inst/extdata/sample_input.yaml)
 
 ### Tests
 
@@ -195,11 +194,11 @@ location `custom_tests_path\pkg_name\{operational, performance}`.
 > if any of these pre-requisites are not met, then the report will not
 > be produced
 
-1.  **settings\_directory**: The directory where the settings file (a
+1.  **settings_directory**: The directory where the settings file (a
     `*.yaml` file) is stored.
 
-2.  **settings\_file**: An input file, such as the `sample_input.yaml`
-    provided within the Package, must be found under the
+2.  **settings_file**: An input file, such as the `sample_input.yaml`
+    provided within the package, must be found under the
     `settings_directory` folder. The content of a valid `settings_file`
     is presented below:
 
@@ -225,7 +224,7 @@ location `custom_tests_path\pkg_name\{operational, performance}`.
           - idontexist (== 1.0.0)
           - dplyr (== 1.0.0)
           - dplyr
-        custom_tests_path: 
+        custom_tests_path:
         custom_performance_tests:
           - mvtnorm
         custom_operational_tests:
@@ -243,11 +242,11 @@ location `custom_tests_path\pkg_name\{operational, performance}`.
     The YAML file can be generated using the built-in assistant
     `inputHelper()`.
 
-3.  **input\_directory**: The directory where the `report.Rmd` file is
+3.  **input_directory**: The directory where the `report.Rmd` file is
     stored (a template for the createReport function). The template file
     **must** be named exactly as described.
 
-4.  **custom\_tests\_path**: All custom tests must be found in this
+4.  **custom_tests_path**: All custom tests must be found in this
     directory, as defined in `settings_file`.
 
 NOTE: For Windows binary installations of R 3.4.3. The file `demos.Rout`
@@ -348,13 +347,13 @@ report.
 `createReport` has the following parameters, for which appropriate
 arguments must be supplied: + `settings_file`: name of the settings file
 (\*.yaml) used to generate the report. For example
-“qualification\_settings.yaml” + `settings_directory`: full path to the
+“qualification_settings.yaml” + `settings_directory`: full path to the
 directory where the settings file is stored. For example
-“C:/qualification\_project” + `input_directory`: full path to the
+“C:/qualification_project” + `input_directory`: full path to the
 directory where Rmd file is stored. For example
-“C:/qualification\_project/inputs” + `tests_output_directory`: full path
+“C:/qualification_project/inputs” + `tests_output_directory`: full path
 to the directory where test outputs shuold be stored. For example
-“C:/qualifiction\_projcet/outputs” \#’ `html_report` logical flag to
+“C:/qualifiction_projcet/outputs” \#’ `html_report` logical flag to
 enable html report generation. Either `TRUE` (to get an HTML report):w
 or `FALSE`.
 
@@ -383,8 +382,7 @@ The report’s sections and respective contents are described thoroughly
 The function below generates a report on installation, operational and
 performance qualification assessment in PDF format. It takes the
 specifications file directory and the specification file as pre-defined
-arguments. WARNING: any existing files in the directory
-`tests_output_directory` will be deleted.
+arguments.
 
 ``` r
 report_file <- createReport(
@@ -397,5 +395,5 @@ report_file <- createReport(
 
 ## References
 
--   Writing R Extensions:
-    <https://cran.r-project.org/doc/manuals/r-release/R-exts.html>
+- Writing R Extensions:
+  <https://cran.r-project.org/doc/manuals/r-release/R-exts.html>
