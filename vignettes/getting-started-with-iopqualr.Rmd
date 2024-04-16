@@ -1,0 +1,103 @@
+---
+title: "Getting Started with iopqualr"
+author: "Clinbay"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Getting Started with iopqualr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, cache = FALSE, fig.width = 6, fig.height = 4.5)
+```
+
+# Introduction
+
+*iopqualr* is an R package designed for creating automated Installation Qualification (IQ), Operational Qualification (OQ), and Performance Qualification (PQ) reports for R environments in regulated industries. It generates reports as PDF or HTML, ensuring and proving the accuracy and reproducibility of R program outputs, essential for compliance with validation and quality assurance requirements.
+
+For detailed guidance on using R in a regulated environment and custom validation services, you can contact ClinBAY or check the [R Validation Hub](https://www.pharmar.org/overview/) for compliance guidelines.
+
+## Installation
+
+The package can be installed from CRAN or directly from a GitHub repository. Here's how you can install the iopqualr package from various sources:
+
+### From CRAN
+
+```{r, eval=FALSE, echo=TRUE}
+install.packages("iopqualr", dependencies = TRUE)
+```
+
+### From GitHub
+
+```{r, eval=FALSE, echo=TRUE}
+# Install the devtools package if not present
+install.packages("devtools")
+devtools::install(repo="https://github.com/ClinBAY/R-IQ-OQ-PQ-Validation", dependencies = TRUE)
+
+```
+
+### From a Local Folder or Zip File
+
+It is also possible to install the package from a local source, such as a folder or a .zip file:
+
+- Rtools is requisite for Windows users to build from source.
+- The path specified in the install command should be the actual path to the .zip or folder.
+
+```{r, eval=FALSE, echo=TRUE}
+# Install Rtools from https://cran.r-project.org/bin/windows/Rtools/
+install.packages("devtools")
+# For a .zip file:
+devtools::install("C:/path_to_zip/name_of_zip.zip", dependencies = TRUE)
+# For an uncompressed local folder:
+devtools::install("C:/path_to_folder/", dependencies = TRUE)
+```
+
+## Loading the package
+
+After installation, load the package into the R session:
+
+```{r, echo=TRUE}
+library(iopqualr)
+```
+
+## Creating an Initial YAML File
+
+The package requires a YAML file defining the configuration for the qualification reports. To assist with creating this YAML file, *iopqualr* provides an interactive function:
+
+```{r, eval=FALSE, echo=TRUE}
+iop_input_helper()
+```
+
+This will guide you through setting up the necessary configurations.
+
+## Generating Reports
+
+Using the YAML file created with `iop_input_helper()`, you can generate the qualification report by running `iop_create_report()`. Here is how you call the function with the necessary parameters:
+
+```{r, eval=FALSE, echo=TRUE}
+# Ensure the settings_file (YAML), input_directory, settings_directory, and test_outputs_directory paths are correctly set
+# Also, specify whether you desire an HTML report with html_report parameter
+iop_create_report(
+  settings_file = "<yaml_filename>",
+  settings_directory = "<settings_directory>",
+  input_directory = "<input_directory>",
+  test_outputs_directory = "<output_location>",
+  html_report = FALSE # Or TRUE for an HTML report
+)
+```
+
+## Obtaining Further Assistance
+
+For more information and advanced features, please refer to the official documentation for the iopqualr package and the R Validation Hub for additional resources on complying with R environment validation in regulated industries.
+
+## Conclusion
+
+This vignette provides you with the knowledge to install the iopqualr package and generate a comprehensive report to qualify your R environment, which is indispensable in regulated settings.
+
+# References
+
+- Official *iopqualr* GitHub repository and issue tracker: [User documentation](https://github.com/ClinBAY/R-IQ-OQ-PQ-Validation) | [Issue tracker](https://github.com/ClinBAY/R-IQ-OQ-PQ-Validation/issues)
+- R Validation Hub: [Overview](https://www.pharmar.org/overview/)

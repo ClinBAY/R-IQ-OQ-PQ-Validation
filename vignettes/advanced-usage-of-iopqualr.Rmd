@@ -1,0 +1,113 @@
+---
+title: "Advanced Usage of iopqualr"
+author: "Clinbay"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Advanced Usage of iopqualr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Advanced Usage of iopqualr: Implementing Custom Tests
+
+This document provides guidance for users who want to implement custom tests within the `iopqualr` package framework. To ensure compliance in regulated industries, it may be necessary to extend iopqualr's capabilities to include sector-specific testing for R packages. This involves specifying test file locations and integrating with YAML specification files.
+
+## Motivation
+
+### Compliance and Industry Standards
+
+Custom tests are critical for meeting the regulatory requirements specific to various industries. By implementing custom tests within `iopqualr`, developers can ensure their R packages comply with rigorous, industry-specific guidelines.
+
+### Tailored Quality Assurance
+
+Sector-specific custom tests provide targeted quality assurance, detecting potential errors tailored to the operational nuances of the software's intended environment.
+
+### Performance Metrics
+
+Especially in high-stakes fields, performance tests must reflect industry pressures and demands. `iopqualr` enables custom tests that measure how well a package holds up under industry-specific performance scenarios.
+
+### Unique Features and Evolution
+
+Industries have specialized needs and are subject to continuous change. Custom testing allows for adapting to new standards and validating unique features within R packages that industry-generic tests might overlook.
+
+### Testing Efficiency
+
+`iopqualr` integrates with `testthat` and uses YAML configurations for streamlined, maintainable, and automatable custom testing, enhancing efficiency and consistency.
+
+### Reporting and Accountability
+
+Automated reporting through `iopqualr`’s `iop_create_report` ensures clear documentation and accountability, both critical for meeting audit and review standards in regulated sectors.
+
+By incorporating custom tests, `iopqualr` delivers a framework catering to the nuanced demands of various industries, ensuring R packages are not only functional but also industry-compliant and robust under specific conditions.
+
+## Pre-requisites
+
+Before proceeding, please ensure the `iopqualr` package is installed and loaded in your R environment. The package should be version 0.0.0.9000 or higher to ensure compatibility with the instructions provided herein.
+
+```{r setup, include=FALSE}
+library(iopqualr)
+```
+
+## Custom Test File Locations
+
+Sector-specific tests should be organized in a structured manner within your project's directory. The recommended structure for custom tests is as follows:
+
+```
+- custom_tests/
+  - package_name/
+    - operational/
+      - test_operational.R
+    - performance/
+      - test_performance.R
+```
+
+where `package_name` should be replaced with the actual name of the package you are testing. The `operational` directory should contain tests that verify the package's operational capabilities, while the `performance` directory should focus on performance-related tests.
+
+## Creating a Custom Test
+
+Your custom test files should utilize the `testthat` framework as `iopqualr` integrates seamlessly with it. Below is a template for creating a custom operational test for a hypothetical package named "examplepkg":
+
+```{r custom-test-example, eval=FALSE}
+context("Operational Tests for examplepkg")
+
+test_that("examplepkg function returns expected results", {
+  expect_equal(examplepkg::example_function(), expected_result)
+})
+```
+
+## YAML Specification Integration
+
+To integrate custom tests with `iopqualr`, you must reference the test directories within the YAML specification file. Here's an example snippet that you would add to your YAML configurations:
+
+```{yaml}
+custom_tests_path: "/path/to/custom_tests/"
+custom_operational_tests:
+  - examplepkg
+custom_performance_tests:
+  - examplepkg
+```
+
+The `custom_tests_path` should point to the top-level directory where your custom tests are located. The `custom_operational_tests` and `custom_performance_tests` lists should include the names of the packages for which you have custom tests prepared.
+
+## Running Custom Tests with iop_create_report()
+
+Once your custom tests and YAML configuration are in place, you can run the qualification report with `iop_create_report()`. Be sure to specify the correct directories for your settings and inputs:
+
+```{r iop-create-report-usage, eval=FALSE}
+# Assuming that the user would like to generate an HTML report:
+iop_create_report(
+  settings_file = "your_settings_file.yaml",
+  settings_directory = "/path/to/settings/",
+  input_directory = "/path/to/inputs/",
+  test_outputs_directory = "/path/to/output/",
+  html_report = TRUE # Add TRUE for HTML report (otherwise PDF is generated)
+)
+```
+
+The `settings_file` should be the name of the YAML file that includes your custom test specifications.
+
+## Conclusion
+
+By following the structure and guidelines outlined in this vignette, you can effectively add custom, sector-specific tests to your `iopqualr` configuration. This ensures that a comprehensive qualification process is applied, tailored to the unique needs and regulatory requirements of your sector. For more detailed guidance and troubleshooting, refer to the `iopqualr` package documentation.

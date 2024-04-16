@@ -4,13 +4,11 @@ To render the md file: rmarkdown::render('README.Rmd')
 (The package rmarkdown must be installed: install.packages("rmarkdown") ).
 -->
 
-# iopqualr
+# iopqualr: Automated IQ/OQ/PQ Report Generation for R in Regulated Environments
 
-Open-source R program for creating R IQ/OQ/PQ automated reports (the
-“Program”).
-
-This package relates to systems and software certification for regulated
-environments.
+An open-source R program for creating automated Installation
+Qualification (IQ), Operational Qualification (OQ), and Performance
+Qualification (PQ) reports for R environments.
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -62,9 +60,9 @@ As you can see on the below diagram, the process is simple:
     packages and their version, along with the path of the directory
     that contains the tests to execute
 
-3.  **Executing** the **function createReport** to produce the output
-    PDF report, which lists all the tests executed and presents the
-    Qualification outcome
+3.  **Executing** the **function iop_create_report** to produce the
+    output PDF report, which lists all the tests executed and presents
+    the Qualification outcome
 
 <figure>
 <img src="./assets/img/riopqqual_how-it-works.png" alt="Diagram" />
@@ -77,11 +75,11 @@ As you can see on the below diagram, the process is simple:
 
 #### Installation from CRAN
 
-You can install the released version of iopqualr from
+You can install the released version of {}s iopqualr from
 [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
-install.packages("iopqualr", dependencies = T)
+install.packages("iopqualr", dependencies = TRUE)
 ```
 
 #### Installation from GitHub
@@ -93,7 +91,7 @@ To install the package from a GitHub repository:
 install.packages("devtools")
 # In the below, github_url is the path to the github repository
 # containing the code.
-devtools::install(repo="<github_url>", dependencies = T)
+devtools::install(repo="<github_url>", dependencies = TRUE)
 ```
 
 #### Installation from a local folder or .zip file
@@ -111,7 +109,7 @@ Install the package and other required packages by running:
 ``` r
 #installing .zip file
 install.packages("devtools")
-devtools::install("C:/path_to_zip/name_of_zip.zip", dependencies = T)
+devtools::install("C:/path_to_zip/name_of_zip.zip", dependencies = TRUE)
 ```
 
 Alternatively, if the folder is not compressed, the following can be
@@ -120,7 +118,7 @@ used to install the package:
 ``` r
 #install devtools package
 install.packages("devtools")
-devtools::install("C:/path_to_folder/", dependencies = T)
+devtools::install("C:/path_to_folder/", dependencies = TRUE)
 ```
 
 ### Loading the package in R
@@ -165,7 +163,7 @@ which is read by the package into a an R list. The YAML file can be
 generated using the built-in assistant:
 
 ``` r
-inputHelper()
+iop_input_helper()
 ```
 
 The input file contains the following mandatory elements:
@@ -218,13 +216,13 @@ location `custom_tests_path\pkg_name\{operational, performance}`.
         packages:
           - MCPMod (== 1.0-10)
           - mvtnorm (== 1.0-6)
-          - ggplot2 (== 2.2.1)
-          - DoseFinding (== 0.9-15)
+          - ggplot2 (== 3.3.5)
+          - DoseFinding (== 1.1-1)
           - idontexist
           - idontexist (== 1.0.0)
           - dplyr (== 1.0.0)
           - dplyr
-        custom_tests_path:
+        custom_tests_path: /home/your-user/iopqualr/tests
         custom_performance_tests:
           - mvtnorm
         custom_operational_tests:
@@ -240,19 +238,19 @@ location `custom_tests_path\pkg_name\{operational, performance}`.
     </details>
 
     The YAML file can be generated using the built-in assistant
-    `inputHelper()`.
+    `iop_input_helper()`.
 
 3.  **input_directory**: The directory where the `report.Rmd` file is
-    stored (a template for the createReport function). The template file
-    **must** be named exactly as described.
+    stored (a template for the iop_create_report function). The template
+    file **must** be named exactly as described.
 
 4.  **custom_tests_path**: All custom tests must be found in this
     directory, as defined in `settings_file`.
 
 NOTE: For Windows binary installations of R 3.4.3. The file `demos.Rout`
 must be found in the `C:\iopqualr` directory (or whichever directory is
-specified as the `run_directory` in when the createReport command is
-run).
+specified as the `run_directory` in when the iop_create_report command
+is run).
 
 ### Installation and Usage Example
 
@@ -295,11 +293,11 @@ operational steps manually to install the example packages to test:
 
 ``` r
 install.packages('devtools', type='win.binary')
-remotes::install_version('mvtnorm', version='1.0-6', type='source', dependencies=TRUE)
-remotes::install_version('DoseFinding', version='0.9-15', type='source', dependencies=TRUE, upgrade='never')
-remotes::install_version('ggplot2', version='2.2.1', type='source', dependencies=TRUE, upgrade='never')
-install.packages('MCPMod', type='win.binary', dependencies=TRUE)
-install.packages('evaluate', type='win.binary', dependencies=TRUE)
+remotes::install_version('mvtnorm', version='1.0-6', type='source', dependencies= TRUE)
+remotes::install_version('DoseFinding', version='0.9-15', type='source', dependencies= TRUE, upgrade='never')
+remotes::install_version('ggplot2', version='2.2.1', type='source', dependencies= TRUE, upgrade='never')
+install.packages('MCPMod', type='win.binary', dependencies= TRUE)
+install.packages('evaluate', type='win.binary', dependencies= TRUE)
 ```
 
 #### 2. Configuration example
@@ -328,23 +326,23 @@ file, the tests to execute, the output test results and the PDF report:
 In the below the input and and settings directories should be changed to
 match your desired locations.
 
-    Rscript -e "library(iopqualr); createReport(input_directory='C:/my_input_dir/', settings_directory='C:/my_input_dir', settings_file = list.files(settings_directory, pattern = '*input*[.]yaml'))"
+    Rscript -e "library(iopqualr); iop_create_report(input_directory='C:/my_input_dir/', settings_directory='C:/my_input_dir', settings_file = list.files(settings_directory, pattern = '*input*[.]yaml'))"
 
 For the configuration example defined in the previous section, you would
 run the below R code to produce the R report:
 
 ``` r
 library(iopqualr)
-createReport(input_directory='C:/iopqualr/input/', settings_directory='C:/iopqualr/settings', settings_file = list.files(settings_directory, pattern = '*input*[.]yaml'))
+iop_create_report(input_directory='C:/iopqualr/input/', settings_directory='C:/iopqualr/settings', settings_file = list.files(settings_directory, pattern = '*input*[.]yaml'))
 ```
 
-##### Parameters of `createReport`
+##### Parameters of `iop_create_report`
 
-As can be seen from the above example, the function `createReport` is
-used to run the qualification processes and create the associated
+As can be seen from the above example, the function `iop_create_report`
+is used to run the qualification processes and create the associated
 report.
 
-`createReport` has the following parameters, for which appropriate
+`iop_create_report` has the following parameters, for which appropriate
 arguments must be supplied: + `settings_file`: name of the settings file
 (\*.yaml) used to generate the report. For example
 “qualification_settings.yaml” + `settings_directory`: full path to the
@@ -363,10 +361,10 @@ For further details on the settings and inputs see
 ### User Requirements
 
 If R and its packages were installed in a system related directory, the
-`createReport()` function will only work accordingly if the user run R
-or RStudio as an administrator or root user. + On Windows, to run R or
-Rstudio as an administrator, when starting the program from the Start
-Menu, right click the program and select the Run as administrator
+`iop_create_report()` function will only work accordingly if the user
+run R or RStudio as an administrator or root user. + On Windows, to run
+R or Rstudio as an administrator, when starting the program from the
+Start Menu, right click the program and select the Run as administrator
 option.
 
 Alternatively, administrator privileges are not required if R and
@@ -385,7 +383,7 @@ specifications file directory and the specification file as pre-defined
 arguments.
 
 ``` r
-report_file <- createReport(
+report_file <- iop_create_report(
   input_directory = system.file("rmarkdown", package = "iopqualr"),
   settings_directory = system.file("extdata", package = "iopqualr"),
   test_outputs_directory = file.path(getwd(), "test-outputs"),
@@ -397,3 +395,21 @@ report_file <- createReport(
 
 - Writing R Extensions:
   <https://cran.r-project.org/doc/manuals/r-release/R-exts.html>
+
+## Community and Support
+
+For inquiries on using R in regulated environments or custom
+validations, contact ClinBAY at [contact
+page](https://www.clinbay.com/contact-us) or visit [R Validation
+Hub](https://www.pharmar.org/overview/).
+
+## Contributing
+
+Contributions to the `iopqualr` package are welcome. Please ensure all
+pull requests follow the existing code structure and have appropriate
+documentation.
+
+## License
+
+This project is licensed under \[License Name\]. See the
+[LICENSE](LICENSE.md) file for details.

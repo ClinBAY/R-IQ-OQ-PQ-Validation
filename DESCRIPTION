@@ -1,7 +1,7 @@
 Package: iopqualr
 Title: Installation, operational and performance qualification for R
 Version: 0.0.0.9000
-Authors@R: 
+Authors@R:
     person(given = "Renos",
            family = "Kakoullis",
            role = c("aut", "cre"),
@@ -29,6 +29,8 @@ Imports:
     tinytex,
     xtable,
     yaml
+VignetteBuilder:
+    knitr
 RoxygenNote: 7.2.3
 SystemRequirements:
     pandoc (> 1.12)
