@@ -65,7 +65,7 @@ As you can see on the below diagram, the process is simple:
     the Qualification outcome
 
 <figure>
-<img src="./assets/img/riopqqual_how-it-works.png" alt="Diagram" />
+<img src="./assets/img/iopqualr-how-it-works.png" alt="Diagram" />
 <figcaption aria-hidden="true">Diagram</figcaption>
 </figure>
 
