@@ -65,7 +65,7 @@ As you can see on the below diagram, the process is simple:
     the Qualification outcome
 
 <figure>
-<img src="./assets/img/iopqualr-how-it-works.png" alt="Diagram" />
+<img src="./assets/img/riopqqual_how-it-works.png" alt="Diagram" />
 <figcaption aria-hidden="true">Diagram</figcaption>
 </figure>
 
@@ -89,9 +89,10 @@ To install the package from a GitHub repository:
 ``` r
 #install devtools package
 install.packages("devtools")
-# In the below, github_url is the path to the github repository
-# containing the code.
-devtools::install(repo="<github_url>", dependencies = TRUE)
+# In the below, github_repo_url is the part of path to the github repository
+# containing the code with title extracted.
+# Example: "ClinBAY/R-IQ-OQ-PQ-Validation"
+devtools::install_github("<github_repo_url>", dependencies = TRUE)
 ```
 
 #### Installation from a local folder or .zip file
@@ -149,9 +150,12 @@ are required
     - Spec details every R package which must be present and which tests
       to run on each package.
 3.  User runs the Program
-    - Spec file location (path with a file name) as a parameter
-    - Desired Output file location (path with a file name) as a
-      parameter
+    - Provide the input directory containing all the files needed for
+      report generation. The output report and test results will also be
+      saved in this directory.
+    - Specify the path to the folder where test results will be saved.
+    - Provide the location and file name of the specifications file as
+      parameters.
 4.  Program runs using Spec as input
 5.  Program creates PDF R IQ-OQ-PQ report (the “Output”) and writes to
     output location.
@@ -178,7 +182,7 @@ The input file contains the following mandatory elements:
     performance tests area available and should be run
 
 View a sample YAML containing tests specifications:
-[sample_input.yaml](pkg/inst/extdata/sample_input.yaml)
+[sample_input.yaml](./inst/extdata/sample_input.yaml)
 
 ### Tests
 
@@ -186,6 +190,105 @@ If any packages are listed in the inputs for custom performance or
 operational tests then the `custom_tests_path` directory must contain
 tests to run for that package using the `testthat` framework in the
 location `custom_tests_path\pkg_name\{operational, performance}`.
+
+#### Instructions
+
+##### Custom Performance and Operational Tests
+
+###### 1. Create a Main Tests Directory
+
+Create a main folder where you want to organize all the test folders.
+For example:
+
+- On your Desktop, right-click and select `New Folder`.
+- Name this folder `custom_tests_path`.
+
+###### 2. Create Subdirectories for Each Package
+
+Inside the `custom_tests_path` directory, create subdirectories for each
+package that will contain the performance and operational tests. For
+instance, if you are testing the `mvtnorm` package:
+
+- Open the `custom_tests_path` folder.
+- Create a new folder named `mvtnorm`.
+- Inside the `mvtnorm` folder, create two subfolders: `performance` and
+  `operational`.
+
+The directory structure should look something like this:
+
+    custom_tests_path
+    └── mvtnorm
+        ├── performance
+        │   └── (performance test files here)
+        └── operational
+            └── (operational test files here)
+            
+
+Repeat this process for each package you are testing (e.g.,
+`DoseFinding`, `MCPMod`, `ggplot2`).
+
+###### 3. Writing Custom Tests
+
+Once the directory structure is set, you can write custom performance
+and operational tests for each package.
+
+###### Performance Test Example
+
+In `custom_tests_path/pkg_name/performance`, create `.R` files with the
+necessary test scripts. For instance, to create a performance test for
+the `mvtnorm` package:
+
+``` r
+test_that("pmvnorm returns length 1", {
+  expect_less_than(
+    system.time(replicate(10^4, mvtnorm::qmvt(sigma=1, p=0.01)$quantile))[[3]],
+    0.5
+  )
+})
+```
+
+###### Operational Test Example
+
+In `custom_tests_path/pkg_name/operational`, create `.R` files with the
+necessary test scripts. For example, to create operational tests for the
+`mvtnorm` package:
+
+``` r
+test_that("Miwa function is exported", {
+  expect_equal(class(mvtnorm::Miwa), "function")
+})
+
+test_that("pmvnorm returns length 1", {
+  expect_equal(length(mvtnorm::pmvnorm(sigma=1)), 1L)
+})
+```
+
+###### 4. Verify Directory Structure
+
+Ensure your `custom_tests_path` folder looks something like this, with
+subdirectories for performance and operational tests for each package:
+
+    custom_tests_path
+    ├── DoseFinding
+    │   ├── performance
+    │   │   └── (performance test files here)
+    │   └── operational
+    │       └── (operational test files here)
+    ├── mvtnorm
+    │   ├── performance
+    │   │   └── (performance test files here)
+    │   └── operational
+    │       └── (operational test files here)
+    ├── MCPMod
+    │   ├── performance
+    │   │   └── (performance test files here)
+    │   └── operational
+    │       └── (operational test files here)
+    └── ggplot2
+        ├── performance
+        │   └── (performance test files here)
+        └── operational
+            └── (operational test files here)
 
 ### Pre-Requisites to Running (IMPORTANT)
 
@@ -323,17 +426,18 @@ file, the tests to execute, the output test results and the PDF report:
 
 #### 3. Run example
 
-In the below the input and and settings directories should be changed to
-match your desired locations.
-
-    Rscript -e "library(iopqualr); iop_create_report(input_directory='C:/my_input_dir/', settings_directory='C:/my_input_dir', settings_file = list.files(settings_directory, pattern = '*input*[.]yaml'))"
-
-For the configuration example defined in the previous section, you would
-run the below R code to produce the R report:
+For the configuration examples defined in the previous section, you
+would run the below R code to produce the R report:
 
 ``` r
 library(iopqualr)
-iop_create_report(input_directory='C:/iopqualr/input/', settings_directory='C:/iopqualr/settings', settings_file = list.files(settings_directory, pattern = '*input*[.]yaml'))
+iop_create_report(
+   input_directory = "C:/iopqualr/input/",
+   settings_directory = "C:/iopqualr/settings",
+   test_outputs_directory = "C:/iopqualr/input/test-outputs",
+   settings_file = "sample_input.yaml",
+   html_report = TRUE
+)
 ```
 
 ##### Parameters of `iop_create_report`
@@ -372,24 +476,18 @@ RStudio were installed in a user owned directory.
 
 ### Output
 
-The report’s sections and respective contents are described thoroughly
-[elsewhere](/docs/README_OUTPUT.md).
+The output of the report generation contains:
 
-### Creating IOP Qualification Report in PDF
-
-The function below generates a report on installation, operational and
-performance qualification assessment in PDF format. It takes the
-specifications file directory and the specification file as pre-defined
-arguments.
-
-``` r
-report_file <- iop_create_report(
-  input_directory = system.file("rmarkdown", package = "iopqualr"),
-  settings_directory = system.file("extdata", package = "iopqualr"),
-  test_outputs_directory = file.path(getwd(), "test-outputs"),
-  settings_file = list.files(settings_directory, pattern = "*input*[.]yaml")
-)
-```
+1.  details of all tests run
+2.  result of every test run, including reason-indicator in case of
+    failure
+3.  overall result of tests run, including summary of test results
+4.  context description for each test so that
+    - the results and significance can be interpreted
+    - the report can be read by humans possessing required domain
+      expertise
+5.  a description of the tested environment, including the list of
+    packages in the environment and their versions
 
 ## References
 

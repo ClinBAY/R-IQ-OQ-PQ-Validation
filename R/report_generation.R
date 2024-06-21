@@ -47,10 +47,6 @@ iop_create_report <- function(input_directory, settings_directory,
   assert_that(is.character(settings_file), length(settings_file) > 0)
   assert_that(is.character(settings_directory), dir.exists(settings_directory))
   assert_that(is.character(input_directory), dir.exists(input_directory))
-  assert_that(
-    is.character(test_outputs_directory),
-    dir.exists(test_outputs_directory)
-  )
   assert_that(is.logical(html_report))
 
   if (!iop_check_output_dir(
