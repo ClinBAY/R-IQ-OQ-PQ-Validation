@@ -23,7 +23,7 @@
 #' }
 iop_load_input_file <- function(
     input_file_path =
-        system.file("extdata", "sample_input.yaml", package = "iopqualr"),
+      system.file("extdata", "sample_input.yaml", package = "iopqualr"),
     tests_output_dir = "/home/iopqualr/") {
   assert_that(is.character(input_file_path), length(input_file_path) == 1)
   input_data <- yaml.load_file(input = input_file_path)
@@ -79,10 +79,13 @@ iop_input_helper <- function() {
   header_line <- paste0(rep("#", 22), collapse = "")
   cat(header_line, "IOPQUALR Helper", header_line, "\n\n")
   cat(
+    "Hello! This package is intended for created report on a performance",
+    "of an R environment (testing the installed packages: their performance,",
+    "versionizing, status of installation, custom tests passings, etc.)",
     "Please answer carefully the next questions in order to setup your ",
     "`input.yaml` file.\n"
   )
-  readline("Press RETURN to Start")
+  readline("Press ENTER to Start")
 
   cat("\n\nType the Description text that will be shown on your report: ")
   description <- readline("ANSWER: ")
@@ -90,18 +93,41 @@ iop_input_helper <- function() {
   cat("\nWhat name should be used as the Report's author or Company: ")
   report_author <- readline("ANSWER: ")
 
-  cat("\nWhat R version is targetted for the test?")
+  cat(
+    "\nWhat R version is targeted for the test?",
+    "\n(To check your current R version, enter the following command",
+    "into your R console:",
+    "\nR.Version()",
+    "\nThis will display info about the version of R you have installed,",
+    "\nincluding the version number.)\n"
+  )
+  cat(
+    "In case multiple R versions are installed, you can find available R",
+    "\nversions in RStudio:\n"
+  )
+  cat(
+    "1. Open RStudio and go to ‘Tools’ > ‘Global Options’ > ‘R Version’.\n"
+  )
+  cat(
+    "2. You’ll see a list of installed R versions and can select the one you",
+    "wish to use.\n\n"
+  )
   r_version <- readline("ANSWER: ")
-
-  cat("\nWhat packages you want to test?")
+  cat(
+    "\nWhat packages you want to test? You can find the list of installed",
+    "packages and select which ones you want to test with installed.packages()",
+    "command."
+  )
   cat("\nSpecify multiple packages separating their names by a comma.")
   cat("\nThe packages version will be prompted shortly.")
   packages <- readline("ANSWER: ")
-
   packages <- split_packages(packages)
   n_pckgs <- length(packages)
   if (n_pckgs > 0) {
-    cat("\nEnter the version for each package to be tested.")
+    cat(
+      "\nEnter the version for each package to be tested. You can check which",
+      "\npackages versions are used currently with installed.packages() command"
+    )
     for (i in seq_len(n_pckgs)) {
       ver <- readline(paste0(packages[i], ": "))
       if (nchar(ver) > 0) {
@@ -110,38 +136,65 @@ iop_input_helper <- function() {
     }
   }
 
-  cat("\nWhere is your test directory?")
-  readline("Press RETURN to select the folder.")
-  custom_tests_path <- dirname(file.choose())
+  cat("\nWhere is your custom tests directory?")
+  cat("\n(This is the main folder where you organize performance and")
+  cat("operational test folders for each package.)")
+  readline("Press ENTER to select the folder.")
+
+  if (.Platform$OS.type == "windows") {
+    custom_tests_path <- choose.dir()
+  } else {
+    custom_tests_path <- tcltk::tk_choose.dir()
+  }
 
   cat("\nWhat packages to subject to a performance test?")
+  cat("\n(Performance tests measure the efficiency of the package.)")
   cat("\nSpecify multiple packages separating their names by a comma.")
+  cat("\nIn case explanations here are not sufficient, refer to the 'Custom")
+  cat("    Performance and Operational Tests Documentation' section for")
+  cat("    detailed explanations on writing and organizing your tests.")
   performance_input <- readline("ANSWER: ")
   custom_performance_tests <- split_packages(performance_input)
 
-  cat("\nWhat packages to subject to a operational test?")
+  cat("\nWhat packages to subject to an operational test?")
+  cat("\n(Operational tests check if the package functions as expected.)")
   cat("\nSpecify multiple packages separating their names by a comma.")
+  cat("\nIn case explanations here are not sufficient, refer to the 'Custom")
+  cat("    Performance and Operational Tests Documentation' section for")
+  cat("    detailed explanations on writing and organizing your tests.")
   operational_input <- readline("ANSWER: ")
   custom_operational_tests <- split_packages(operational_input)
 
-  cat("\nWhat tests to perform?\nOptions are: examples, vignettes and tests")
-  cat("\nSpecify multiple packages separating their names by a comma.")
+  cat(
+    "\nWhat basic tests (included to the installed packages; no need to",
+    "write them manually like with operational/performance tests) to perform?",
+    "\nOptions are: examples, vignettes, and tests"
+  )
+  cat("\n(Examples: Code snippets demonstrating functionality.)")
+  cat("\n(Vignettes: Detailed documents and tutorials.)")
+  cat("\n(Tests: Unit tests checking the package's correctness.)")
+  cat("\nSpecify multiple test types separating their names by a comma.")
   test_types <- unique(split_packages(readline("ANSWER: ")))
   if (identical(test_types, character(0))) {
     test_types <- test_types_default
   } else if (!all(test_types %in% test_types_default)) {
     stop(
       "One or more types provided are not the types allowed ",
-      "(examples, vignettes and tests)."
+      "(examples, vignettes, and tests)."
     )
   }
 
   cat("\nThe IOPQUALR Input File has been configured.")
   cat("\nWhere do you want to save the file?")
-  readline("Press RETURN to select the folder and save it.")
-  save_folder <- dirname(file.choose())
+  readline("Press ENTER to select the folder and save it.")
 
-  cat("\nWhat name would you want to give to the file?")
+  if (.Platform$OS.type == "windows") {
+    save_folder <- choose.dir()
+  } else {
+    save_folder <- tcltk::tk_choose.dir()
+  }
+
+  cat("\nWhat name do you want to give to the file? Format is 'filename.yaml'")
   file_name <- readline("ANSWER: ")
 
   settings$description <- list(description)
@@ -154,7 +207,7 @@ iop_input_helper <- function() {
   settings$custom_tests_path <- custom_tests_path
   settings$tests_output_dir <- save_folder
 
-  write_yaml(settings, file.path(save_folder, paste0(file_name, ".yaml")))
+  write_yaml(settings, file.path(save_folder, file_name))
 
   cat("\nFile `", file_name, ".yaml` was saved sucessfully.", sep = "")
 }

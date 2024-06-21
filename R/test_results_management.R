@@ -86,8 +86,11 @@ iop_summarise_results <- function(results = iop_gen_test_results()) {
 
   assert_that(all(required_elements %in% names(results)))
 
-  # Test if elements of results list are data frames using vapply
-  assert_that(all(vapply(results, is.data.frame, logical(1))))
+  is_data_frame_or_null <- function(x) {
+        is.data.frame(x) || is.null(x)
+    }
+  
+  assert_that(all(vapply(results, is_data_frame_or_null, logical(1))))
 
   d <- list(
     "Basic Tests" = results[["basic"]] %>%
