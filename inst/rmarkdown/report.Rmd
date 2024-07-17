@@ -53,7 +53,7 @@ options(
 library(xtable)
 ```
 
-```{r, echo = FALSE, results = "hide"}
+```{r, echo = FALSE, results='hide'}
 test_results <- iop_gen_test_results(settings)
 ```
 
@@ -129,6 +129,7 @@ R.version %>% {
 .Platform %>% {
   dplyr::tibble(Variable = names(.), Value = unname(.))
 } %>%
+  xtable(caption = "Details of Platform") %>%
   iop_print_xtable("Details of Platform")
 ```
 
@@ -141,6 +142,7 @@ R.version %>% {
   {
     dplyr::tibble(Variable = names(.), Value = unname(.))
   } %>%
+  xtable(caption = "Details of Machine") %>%
   iop_print_xtable("Details of Machine")
 
 ```
@@ -182,7 +184,10 @@ Operational qualification assessment involves testing that R and required packag
 Below are the results of R core system tests. If the test result is `NA` this means that the R installation has been made without core system tests being available.
 
 ```{r, results = "asis", echo = FALSE}
-test_results[["basic"]] %>% iop_print_xtable("Results of Core System Tests")
+test_results[["basic"]] %>% 
+  mutate(test_passed = as.character(test_passed)) %>%
+  replace_na(list(scope = "N/A", test_passed = "N/A")) %>% 
+  iop_print_xtable("Results of Core System Tests")
 ```
 
 ## Base Packages

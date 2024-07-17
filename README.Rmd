@@ -318,7 +318,6 @@ install.packages('MCPMod', type='win.binary', dependencies= TRUE)
 install.packages('evaluate', type='win.binary', dependencies= TRUE)
  ```
 
-
 #### 2. Configuration example
 
 Once the example packages to test have been installed (see above section), you can create a local directory where to store the YAML input file, the tests to execute, the output test results and the PDF report:
@@ -361,13 +360,131 @@ or `FALSE`.
 
 For further details on the settings and inputs see `Pre-Requisites to Running (IMPORTANT)` above.
 
-### User Requirements
+### Investigating FALSE Values in Tests using iopqualr Package
 
+To investigate possible FALSE values for tests using the `iopqualr` package, start by utilizing several features and functions provided in the package. The investigation can be systematized into two main steps: examining the output files and re-running the failing tests individually.
+
+#### Examining Output Files
+
+The `iop_create_report` function generates a detailed PDF or HTML report summarizing the results of the package tests, including the ones that failed. By setting proper directories and input files, you can generate this report:
+
+```R
+library(iopqualr)
+
+iop_create_report(
+   input_directory = "path/to/input/",
+   settings_directory = "path/to/settings",
+   test_outputs_directory = "path/to/test-outputs",
+   settings_file = "settings_file_name.yaml",
+   html_report = TRUE
+)
+```
+
+In this report, each test is documented with its outcome (PASSED or FAILED), and for failures, reasons or error messages associated with the failure are provided, which can act as a primary source of insight.
+
+You can then check the provided `test_outputs_directory` for files containing "fail" (e.g., `base-Ex.Rout.fail`) at the end and then examine them thoughtfully as those files contain full logs of running separate tests and their results.
+
+#### Running Failing Tests Individually
+
+Use functions such as `iop_gen_test_results`, `iop_summarise_results`, and `iop_run_custom_tests` to run and summarize specific test results:
+
+```R
+# Load settings from input file
+settings <- iop_load_input_file("path/to/settings/settings_file_name.yaml")
+
+# Generate all test results
+results <- iop_gen_test_results(settings)
+
+# Summarize the results
+summary <- iop_summarise_results(results)
+print(summary)
+```
+
+If a specific test has failed, use the package-specific functions to re-run the tests in isolation to get more detailed diagnostic information. For example:
+
+```R
+# Run custom operational tests for a specific package (e.g., mvtnorm)
+oper_results <- iop_run_custom_tests(
+   packages = c("mvtnorm"),
+   type = "operational",
+   tests_path = settings[["custom_tests_path"]]
+)
+print(oper_results)
+```
+
+### User Requirements
 
 If R and its packages were installed in a system related directory, the `iop_create_report()` function will only work accordingly if the user run R or RStudio as an administrator or root user.
 + On Windows, to run R or Rstudio as an administrator, when starting the program from the Start Menu, right click the program and select the Run as administrator option.
 
 Alternatively, administrator privileges are not required if R and RStudio were installed in a user owned directory.
+
+### TexLive updates
+
+When running examples above with setting output report format to PDF, you may run into missing package errors, such as `! LaTeX Error: File 'xyz.sty' not found.` This commonly occurs if your LaTeX distribution does not have all required packages installed out-of-the-box. This section provides installation suggestions for extra packages on Windows, macOS, and Linux.
+
+#### Installation Instructions
+
+##### macOS
+
+1. **Using MacTeX:**
+   - Ensure you have MacTeX installed. If not, download and install it from [tug.org](https://www.tug.org/mactex/).
+   - After installation, use the TeX Live Manager (tlmgr) to manage and install additional packages. Keeping your MacTeX installation up-to-date ensures you have the latest packages.
+   - Open Terminal and run:
+     ```sh
+     sudo tlmgr update --self --all
+     sudo tlmgr install <package-name>
+     ```
+
+##### Windows
+
+1. **Using MiKTeX:**
+   - Download and install MiKTeX from [miktex.org](https://miktex.org/).
+   - Open MiKTeX Console (search for it in the Start menu).
+   - In the "Packages" tab, you can search for and install additional packages.
+   - Keep your MiKTeX installation up-to-date to ensure you have the latest packages. Enable the "Install missing packages on-the-fly" option for automatic installation when required.
+
+2. **Using TeX Live:**
+   - If you prefer TeX Live, download and install it from [tug.org/texlive](https://www.tug.org/texlive/).
+   - Use the TeX Live Manager (tlmgr) to manage packages. Open Command Prompt as an administrator and run:
+     ```sh
+     tlmgr update --self --all
+     tlmgr install <package-name>
+     ```
+
+##### Linux (Ubuntu)
+
+1. **Using TeX Live:**
+   - Install TeX Live and the recommended extras by running:
+     ```sh
+     sudo apt-get update
+     sudo apt-get install texlive-latex-extra
+     sudo apt-get install texlive-full  # This installs the complete TeX Live distribution
+     ```
+   - Keep your TeX Live installation up-to-date:
+     ```sh
+     sudo apt-get upgrade texlive-latex-extra
+     sudo apt-get upgrade texlive-full
+     ```
+
+#### General Recommendations
+
+- Regardless of the operating system, ensure your LaTeX distribution is up-to-date. This minimizes the chance of encountering missing packages.
+- Use a package manager provided by your LaTeX distribution (e.g., `tlmgr` for TeX Live, MiKTeX Console for MiKTeX) to install and update packages.
+- Enabling automatic package installation features can simplify the process of managing dependencies.
+
+### Core System Tests
+
+Core system tests are often unavailable in many R installations, including minimal installations, precompiled binaries, and custom setups. Our package accounts for this by including these tests and marking their results as "N/A" if the core tests are not provided.
+
+The unavailability of core system tests can be due to several reasons:
+
+- **Precompiled Binaries**: To save on download size and installation time, precompiled binary installations may exclude core tests.
+- **Custom Installation Options**: Custom installations might disable these tests based on specific configurations.
+- **Older Versions of R**: Older R versions may have different configurations that do not include core tests.
+- **Minimal Installations**: Specific installations tailored for minimalistic setups may purposely exclude these tests.
+- **User/Admin Choices**: Decisions made during the installation process might lead to exclusion of the core tests.
+---
 
 ### Output
 
@@ -380,6 +497,63 @@ The output of the report generation contains:
     * the results and significance can be interpreted
     * the report can be read by humans possessing required domain expertise
 5. a description of the tested environment, including the list of packages in the environment and their versions
+
+## Unit Test Descriptions
+
+Unit tests, stored in 'testthat' directory, help to ensure that individual components function correctly, prevent future regressions, and facilitate easier maintenance and refactoring. Below are the descriptions of  unit test files created for iopqualr package, detailing their purposes.
+
+### test_folder_validation.R
+
+This file contains unit tests to validate the function `iop_check_output_dir()`. The primary purpose is to ensure correct specification and distinction among different directories ('input', 'settings', and 'output') used in a data input and processing pipeline.
+
+#### Tests:
+1. **Output directory is distinct**
+2. **Output directory same as input directory**
+3. **Output directory (with slash) same as input directory**
+4. **Output directory same as settings directory**
+5. **Output directory (with slash) same as settings directory**
+6. **Output directory is an empty string**
+7. **Input or settings directory is an empty string**
+
+### test_help_functions.R
+
+This file tests the `iop_get_help_desc()` function to ensure that it retrieves help descriptions accurately across a variety of conditions and inputs.
+
+#### Tests:
+1. **Returns help description for valid objects**
+2. **Works with default argument**
+3. **Collapses and trims whitespace**
+4. **Throws an error for non-existing objects**
+
+### test_input_management.R
+
+This file validates the `iop_load_input_file()` function, which is responsible for loading input files (such as YAML files) into an R data structure, typically a list.
+
+#### Tests:
+1. **Loads a sample YAML file**
+2. **Returns a list**
+
+### test_report_generation.R
+
+This file includes unit tests to ensure the proper functioning of functions involved in generating and formatting reports, specifically using the `xtable` package for HTML or LaTeX outputs.
+
+#### Tests:
+
+1. **iop_print_xtable**:
+   - **Returns NULL for NULL input**
+   - **Works with HTML output**
+   - **Works with LaTeX output**
+
+2. **iop_color_logical**:
+   - **Colors logical values correctly**
+   - **Handles NULL input correctly**
+
+3. **iop_custom_sanitize**:
+   - **Leaves custom colored FALSE unchanged**
+   - **Sanitizes input without custom FALSE**
+
+4. **iop_custom_add_row**:
+   - **Returns the correct list**
 
 ## References
 

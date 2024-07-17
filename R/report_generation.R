@@ -127,11 +127,16 @@ iop_color_logical <- function(d) {
   if (is.null(d)) {
     return(NULL)
   }
+  is_html <- is_html_output()
   mutate(
     d,
     across(
       where(is.logical),
-      ~ ifelse(.x, .x, str_c("\\textcolor{red!100}{", .x, "}"))
+      ~ ifelse(.x, .x, if (is_html) {
+        'FALSE'
+      } else {
+        str_c("\\textcolor{red!100}{", .x, "}")
+      })
     )
   )
 }
