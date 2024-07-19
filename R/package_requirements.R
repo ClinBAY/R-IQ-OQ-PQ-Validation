@@ -49,8 +49,8 @@ iop_rename_pkg_versions <- function(d) {
   )
 
   required_cols <- c(
-    "requirement", "is_installed", "installed_version",
-    "all_passed"
+    "Requirement", "Installed", "Version",
+    "Passed"
   )
 
   assert_that(
